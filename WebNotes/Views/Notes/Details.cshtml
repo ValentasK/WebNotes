@@ -1,0 +1,56 @@
+﻿@model WebNotes.Models.ViewModels.NoteViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Note</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Note.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Note.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Note.Created)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Note.Created)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Note.LastModified)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Note.LastModified)
+        </dd>
+        @if (Model.IsAdmin)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Note.UserName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Note.UserName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Note.UserUniqueName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Note.UserUniqueName)
+            </dd>
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Note.NoteContent)
+        </dt>
+        <dt class="col-sm-10">
+            <textarea disabled="disabled" class="form-control" style="min-height:35vh">@Model.Note.NoteContent</textarea>
+        </dt>
+    </dl>
+</div>
+<div>
+    <a class="btn btn-info" asp-action="Edit" asp-route-id="@Model.Note.id ">Back</a>
+</div>

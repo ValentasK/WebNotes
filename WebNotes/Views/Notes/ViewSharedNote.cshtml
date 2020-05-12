@@ -1,0 +1,39 @@
+﻿@model WebNotes.Models.ViewModels.NoteViewModel
+
+@{
+    ViewData["Title"] = "ViewSharedNote";
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="SharedNote.UserName" class="control-label">Sender</label>
+            <input asp-for="SharedNote.UserName" class="form-control" disabled="disabled" />
+        </div>
+        <div class="form-group">
+            <label asp-for="SharedNote.Title" class="control-label"></label>
+            <input asp-for="SharedNote.Title" class="form-control" disabled="disabled" />
+        </div>
+        <div class="form-group">
+            <label asp-for="SharedNote.TimeNoteSent" class="control-label"></label>
+            <input asp-for="SharedNote.TimeNoteSent" class="form-control" disabled="disabled" />
+        </div>
+        <div class="form-group">
+            <label asp-for="SharedNote.NoteContent" class="control-label"></label>
+            <textarea disabled="disabled" asp-for="SharedNote.NoteContent" class="form-control" style="min-height:30vh"></textarea>
+        </div>
+        <div class="form-group form-row">
+            <div>
+                <a class="btn btn-info ml-2" asp-action="Index">Back to List</a>
+            </div>
+            <form asp-action="Deleteshared">
+                <input type="hidden" value="@Model.SharedNote.Id" name="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger ml-2" />
+            </form>
+        </div>
+    </div>
+</div>
+
+
+

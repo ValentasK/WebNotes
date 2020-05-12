@@ -1,0 +1,110 @@
+﻿@model WebNotes.Models.ViewModels.NotesViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 style="color:blue">Notes</h1>
+<div class="row">
+
+    <div><a class="btn btn-success ml-3" asp-action="Create">Create New</a></div>
+
+</div>
+
+<br />
+
+
+<form asp-controller="Notes" asp-action="Index" method="get">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <input type="text" asp-for="SearchString" class="form-control mb-2 d-inline" placeholder="...Search" />
+        </div>
+
+        <div class="col-auto">
+            <input type="submit" name="" value="Search" class="btn btn-success mb-2" />
+        </div>
+    </div>
+</form>
+
+@*Table for normal notes*@
+<table class="table">
+    <thead>
+        <tr>
+            @if (Model.IsAdmin)
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Notes[0].UserName)
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.Notes[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes[0].NoteContent)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Notes)
+        {
+            <tr>
+                @if (Model.IsAdmin)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                }
+                <td>
+                    <a class="btn btn-success" asp-action="Edit" asp-route-id="@item.id">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+                <td>
+                    @{
+                        if (!string.IsNullOrEmpty(item.NoteContent) && item.NoteContent.Length > 40)
+                        {
+                            <p> @item.NoteContent.Substring(0, 39) ... </p>
+                        }
+                        else
+                        {
+                            <p> @item.NoteContent ... </p>
+                        }
+                    }
+
+                </td>
+            </tr>
+        }
+
+        @*table                      for shared notes*@
+
+
+
+        @foreach (var item in Model.SharedNotes)
+        {
+            <tr>
+                @if (Model.IsAdmin)
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                }
+
+                <td>
+                    <a class="btn btn-primary" asp-action="ViewSharedNote" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+                <td>
+                    @{
+                        if (!string.IsNullOrEmpty(item.NoteContent) && item.NoteContent.Length > 40)
+                        {
+                            <p> @item.NoteContent.Substring(0, 39) ... </p>
+                        }
+                        else
+                        {
+                            <p> @item.NoteContent ... </p>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

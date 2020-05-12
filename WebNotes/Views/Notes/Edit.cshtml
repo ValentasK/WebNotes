@@ -1,0 +1,217 @@
+﻿
+@model WebNotes.Models.ViewModels.NoteViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Note</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" oninput="KeyPressed()">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Note.id" />
+            <input type="hidden" asp-for="Note.Created" />
+            <input type="hidden" asp-for="Note.UserUniqueName" />
+            <input type="hidden" asp-for="Note.UserName" />
+            <div class="form-group">
+                <label asp-for="Note.Title" class="control-label"></label>
+                <input id="titleText" asp-for="Note.Title" class="form-control" />
+                <span asp-validation-for="Note.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note.NoteContent" class="control-label"></label>
+                <textarea id="contentText" asp-for="Note.NoteContent" class="form-control" style="min-height:35vh"></textarea>
+                <span asp-validation-for="Note.NoteContent" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-row">
+                <div>
+                    <a class="btn btn-info ml-1" asp-action="Index" onclick="updateItem()">Back</a>
+                </div>
+                <div>
+                    <a class="btn btn-info ml-1" asp-action="Details" asp-route-id="@Model.Note.id">Details</a>
+                </div>
+                <div>
+                    <button type="button" onclick="HideContent()" class="btn btn-info ml-1">Share</button>
+                </div>
+                <div>
+                    <a class="btn btn-danger ml-1" asp-action="Delete" asp-route-id="@Model.Note.id">Delete</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row" id="DivToHide" style="display:none">
+    <div class="col-md-4">
+        <div>
+            <button id="publicButton" class="btn btn-info ml-1" onclick="CreatePublicNote()">Public</button>
+        </div>
+        <h5 class="mt-2" id="publickNoteURL"> --------------- </h5>
+        <form asp-action="CreateShared" asp-controller="Notes">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="SharedNoteId" value="@Model.Note.id" />
+            </div>
+
+            <div class="form-group">
+                <div class="col-2">
+                    <label asp-for="Users"></label>
+                </div>
+                <div class="col-4">
+                    <select asp-for="SharedNote.UserUniqueName" asp-items="Model.Users" class="form-control" id="Make" style="min-width:20vw">:</select>
+                    <span asp-validation-for="SharedNote.UserUniqueName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Private" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+    // Time before the action will be taken
+    var timeLeft = 5;
+    // set timer to 1s interval
+    var myVar = setInterval(myTimer, 1000);
+    // variable changes once there is a change or key stroke in the form
+    var keypresed = false;
+
+    // Add oninput event listener in the form as below
+    // <form asp-action="Edit" oninput="KeyPressed()">
+    //Function will be activated once there is a change or key stroke in the form
+    function KeyPressed() {
+        keypresed = true;
+        timeLeft = 2;
+    }
+
+    function myTimer() {
+        if (keypresed) {
+            timeLeft = timeLeft - 1;
+            if (timeLeft < 1) {
+                keypresed = false;
+                timeLeft = 2;
+                // action to save
+                updateItem();
+            }
+        }
+    }
+
+
+    function updateItem() {
+
+        var id = @Model.Note.id; // get id form model object
+        var titletext = document.getElementById("titleText").value; // get new title from title table
+        var contentext = document.getElementById("contentText").value; // get new content from content table
+        var publicbutton = document.getElementById("publicButton");    // get button object
+
+        // make button visible one there is some changes in the note 
+        publicbutton.disabled = false;
+
+        if (titletext == "") {
+            return;   // finishes the function
+        }
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({   // model details to be sent via API put method
+
+            "id": id, // note id
+            "title": titletext,
+            "noteContent": contentext ,
+            "lastModified": "2000-01-01T01:01:01", // blank details
+            "userUniqueName": "Blank-blank",       // blank details
+            "created": "2000-01-01T01:01:01",      // blank details
+            "userName": "Blank-no name"           // blank details
+
+        });
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+
+        //////////////////// Local host api
+        fetch("/api/NotesApi/" + id, requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+
+       //////////////// Azure api
+            // fetch("/api/NotesApi/" + id, requestOptions)
+            //.then(response => response.text())
+            //.then(result => console.log(result))
+            //.catch(error => console.log('error', error));
+    }
+
+
+
+        function CreatePublicNote() {
+
+            var publicbutton = document.getElementById("publicButton");    // get button object
+
+            var urlToDisplay = document.getElementById("publickNoteURL");
+
+            updateItem(); // save message details before creating public note
+
+            var id = @Model.Note.id; // get id form model object
+
+
+            var titletext = document.getElementById("titleText").value; // get title value from the table
+            if (titletext == "") {
+                return;   // finishes the function
+            }
+
+            var raw = "";
+
+            var requestOptions = {
+              method: 'PUT',
+              body: raw,
+              redirect: 'follow'
+            };
+
+            fetch("/api/PublicNotesAPI/" + id, requestOptions) // send note id to the controller
+                .then(response => response.text())  // translate json to string 
+                .then(result => updateUrl(result))  // send string value to updateUrl()
+                .catch(error => console.log('error', error));
+
+            // updates url for new created public note 
+            function updateUrl(id) {
+
+                 // update url text in view for localhost
+                urlToDisplay.innerHTML = "https://localhost:44374/PublicNotes/ViewPublicNote/" + id;
+
+                // update url text in view for Azure 
+               // urlToDisplay.innerHTML = "https://simplewebnotes.azurewebsites.net/PublicNotes/ViewPublicNote/" + id;
+
+                // disable button 
+                publicbutton.disabled = true;
+            }
+
+        }
+
+    </script>
+
+}
+
+
+
+
+

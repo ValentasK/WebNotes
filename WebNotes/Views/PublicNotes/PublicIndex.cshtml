@@ -1,0 +1,72 @@
+﻿@model WebNotes.Models.ViewModels.PublicNotesViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 style="color:blue">Public Notes</h1>
+<
+
+<br />
+
+
+<form asp-controller="PublicNotes" asp-action="PublicIndex" method="get">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <input type="text" asp-for="SearchString" class="form-control mb-2 d-inline" placeholder="...Search" />
+        </div>
+        <div class="col-auto">
+            <input type="submit" name="" value="Search" class="btn btn-success mb-2" />
+        </div>
+    </div>
+</form>
+
+@*Table for public notes*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PublicNotes[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublicNotes[0].UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublicNotes[0].NoteContent)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PublicNotes)
+        {
+        <tr>
+
+            <td>
+                <a class="btn btn-success" asp-action="ViewPublicNote" asp-route-id="@item.id">@Html.DisplayFor(modelItem => item.Title)</a>
+
+            </td>
+
+            <td>
+                @{ <p> @item.UserName </p> }
+
+            </td>
+
+            <td>
+                @{
+                    if (!string.IsNullOrEmpty(item.NoteContent) && item.NoteContent.Length > 40)
+                    {
+                        <p> @item.NoteContent.Substring(0, 39) ... </p>
+                    }
+                    else
+                    {
+                        <p> @item.NoteContent ... </p>
+                    }
+                }
+
+            </td>
+
+        </tr>
+        }
+    </tbody>
+</table>
