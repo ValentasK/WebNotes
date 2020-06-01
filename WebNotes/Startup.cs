@@ -41,7 +41,7 @@ namespace WebNotes
                     builder =>
                     {
                         builder.WithOrigins("*")
-                                .WithMethods("PUT", "DELETE", "GET");
+                                .WithMethods("PUT", "DELETE", "GET", "POST");
                     });
             });
         }
